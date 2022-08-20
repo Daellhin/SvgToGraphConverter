@@ -6,9 +6,8 @@ export function download(content: BlobPart, fileName: string, contentType: any) 
     a.click();
 }
 
-export function isEventByKey(event, key, callback) {
+export function isEventByKey(event: KeyboardEvent, key: string, callback: () => void) {
     if (event.key === key) {
         callback()
     }
-    console.log(event)
 }

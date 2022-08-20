@@ -1,4 +1,8 @@
 <script lang="ts">
+import { json } from "@sveltejs/kit";
+
+import type { JsonGraph } from "ngraph.fromjson";
+
     import type { Graph,Node } from "ngraph.graph";
     import { onMount } from "svelte";
     import Viva from "vivagraphjs";
@@ -13,7 +17,7 @@
     } from "../lib/util/graphUtils";
     import { download,isEventByKey } from "../lib/util/javasciptUtils";
 
-    let graphJson;
+    let graphJson: JsonGraph;
     let graph: Graph;
     let renderer: Renderer;
 
@@ -23,6 +27,7 @@
     let inputToId: string;
     let inputEditNodeId: string;
     let inputGraphJson: string;
+    let inputGraphSvg: string;
 
     function onDownloadButtonClicked() {
         download(
@@ -45,10 +50,17 @@
     }
 
     function onLoadJsonButtonClicked() {
-        graphJson = inputGraphJson;
-        inputGraphJson = "";
+        graphJson = JSON.parse(inputGraphJson);
         reloadGraphData(graph, graphJson);
         fixNodePositions(renderer, graphJson);
+        inputGraphJson = "";
+    }
+
+    function onLoadSvgButtonClicked() {
+        graphJson = extractGraphDataFromSvg(inputGraphSvg);
+        reloadGraphData(graph, graphJson);
+        fixNodePositions(renderer, graphJson);
+        inputGraphSvg = "";
     }
 
     function findPath(fromId: string, toId: string) {
@@ -106,6 +118,21 @@
 </script>
 
 <div class="container">
+    <h5 class="mb-0">SVG</h5>
+    <div class="mb-1">
+        <input
+            class="align-middle"
+            type="text"
+            placeholder="Svg"
+            bind:value={inputGraphSvg}
+            on:keypress={(e) =>
+                isEventByKey(e, "Enter", onLoadSvgButtonClicked)}
+        />
+        <button class="btn btn-light" on:click={onLoadSvgButtonClicked}
+            >Load Graph as SVG</button
+        >
+    </div>
+
     <h5 class="mb-0">Graph Json</h5>
     <div class="mb-1">
         <input
@@ -117,7 +144,7 @@
                 isEventByKey(e, "Enter", onLoadJsonButtonClicked)}
         />
         <button class="btn btn-light" on:click={onLoadJsonButtonClicked}
-            >Load Json as Graph</button
+            >Load Graph as Json</button
         >
         <button
             class="btn btn-light"

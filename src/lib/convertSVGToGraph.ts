@@ -47,7 +47,6 @@ function convertPathStringsToNumbers(paths: string[]) {
             console.error(`Invalid path found ${path}`);
 
         }
-
     })
 
     return paths
@@ -55,7 +54,7 @@ function convertPathStringsToNumbers(paths: string[]) {
             .map(f => f.split(",")
                 .map(g => Number(g))
             )
-        )
+        );
 }
 
 function splitAndNormaliseRelativePaths(svg: string) {
