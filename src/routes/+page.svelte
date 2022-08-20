@@ -1,21 +1,22 @@
 <script lang="ts">
-import { json } from "@sveltejs/kit";
+    import { json } from "@sveltejs/kit";
 
-import type { JsonGraph } from "ngraph.fromjson";
+    import type { JsonGraph } from "ngraph.fromjson";
 
-    import type { Graph,Node } from "ngraph.graph";
+    import type { Graph, Node } from "ngraph.graph";
     import { onMount } from "svelte";
+
     import Viva from "vivagraphjs";
     import { extractGraphDataFromSvg } from "../lib/convertSVGToGraph";
     import { newSvgPathGraph } from "../lib/data/svgs";
     import type { Renderer } from "../lib/types/types";
     import {
-    createPathFinderForGraphWithCoordinates,
-    fixNodePositions,
-    reloadGraphData,
-    replaceNodeId
+        createPathFinderForGraphWithCoordinates,
+        fixNodePositions,
+        reloadGraphData,
+        replaceNodeId,
     } from "../lib/util/graphUtils";
-    import { download,isEventByKey } from "../lib/util/javasciptUtils";
+    import { download, isEventByKey } from "../lib/util/javasciptUtils";
 
     let graphJson: JsonGraph;
     let graph: Graph;
@@ -83,6 +84,7 @@ import type { JsonGraph } from "ngraph.fromjson";
                 const ui = Viva.Graph.svg("g");
                 const svgText = Viva.Graph.svg("text")
                     .attr("y", "-4px")
+                    .attr("class", "graph-label")
                     .text(node.id);
 
                 ui.addEventListener("click", () => {
@@ -117,92 +119,96 @@ import type { JsonGraph } from "ngraph.fromjson";
     });
 </script>
 
-<div class="container">
-    <h5 class="mb-0">SVG</h5>
-    <div class="mb-1">
-        <input
-            class="align-middle"
-            type="text"
-            placeholder="Svg"
-            bind:value={inputGraphSvg}
-            on:keypress={(e) =>
-                isEventByKey(e, "Enter", onLoadSvgButtonClicked)}
-        />
-        <button class="btn btn-light" on:click={onLoadSvgButtonClicked}
-            >Load Graph as SVG</button
-        >
+<div class="container flex flex-row h-screen py-3 lg:px-4 gap-x-8">
+    <div class="flex-col w-full">
+        <div id="graphContainer" class="border-solid border-2 h-full" />
     </div>
+    <div class="flex-col">
+        <h1 class="text-3xl font-bold mb-2">Svg</h1>
+        <div class="flex flex-col mb-1 gap-4">
+            <textarea
+                class="textarea input-bordered"
+                type="text"
+                placeholder="Svg"
+                bind:value={inputGraphSvg}
+                on:keypress={(e) =>
+                    isEventByKey(e, "Enter", onLoadSvgButtonClicked)}
+            />
+            <button class="btn btn-primary" on:click={onLoadSvgButtonClicked}
+                >Load Graph as SVG</button
+            >
+        </div>
 
-    <h5 class="mb-0">Graph Json</h5>
-    <div class="mb-1">
-        <input
-            class="align-middle"
-            type="text"
-            placeholder="Json"
-            bind:value={inputGraphJson}
-            on:keypress={(e) =>
-                isEventByKey(e, "Enter", onLoadJsonButtonClicked)}
-        />
-        <button class="btn btn-light" on:click={onLoadJsonButtonClicked}
-            >Load Graph as Json</button
-        >
-        <button
-            class="btn btn-light"
-            on:click={onDownloadButtonClicked}
-            disabled={!graphJson}>Download Current Graph Json</button
-        >
+        <h1 class="text-3xl font-bold mt-2 mb-2">Json</h1>
+        <div class="flex flex-col mb-1 gap-4">
+            <textarea
+                class="textarea input-bordered"
+                type="text"
+                placeholder="Json"
+                bind:value={inputGraphJson}
+                on:keypress={(e) =>
+                    isEventByKey(e, "Enter", onLoadJsonButtonClicked)}
+            />
+            <button class="btn btn-primary" on:click={onLoadJsonButtonClicked}
+                >Load Graph as Json</button
+            >
+            <button
+                class="btn btn-primary"
+                on:click={onDownloadButtonClicked}
+                disabled={!graphJson}>Download Current Graph Json</button
+            >
+        </div>
+
+        <h1 class="text-3xl font-bold mt-2 mb-2">Edit node (Select a node)</h1>
+        <div class="mb-1">
+            <div class="flex flex-row gap-2">
+                <input
+                    class="input input-bordered"
+                    type="text"
+                    placeholder="NodeId"
+                    bind:value={inputEditNodeId}
+                    on:keypress={(e) =>
+                        isEventByKey(e, "Enter", onEditNodeSaveButtonClicked)}
+                    disabled={!selectedNode}
+                />
+                <button
+                    class="btn btn-primary"
+                    on:click={onEditNodeSaveButtonClicked}
+                    disabled={!selectedNode}>Save changes</button
+                >
+            </div>
+        </div>
+
+        <h5 class="text-3xl font-bold mt-2 mb-2">Pathfinder</h5>
+        <div class="flex flex-col mb-1 gap-4">
+            <div class="flex flex-row gap-2">
+                <input
+                    class="input input-bordered"
+                    type="text"
+                    placeholder="From"
+                    bind:value={inputFromId}
+                />
+                <input
+                    class="input input-bordered"
+                    type="text"
+                    placeholder="To"
+                    bind:value={inputToId}
+                />
+            </div>
+            <button class="btn btn-primary" on:click={onPathfindingButtonClicked}
+                >Find path (console)</button
+            >
+        </div>
     </div>
-
-    <h5 class="mb-0">Edit node (Select a node)</h5>
-    <div class="mb-1">
-        <input
-            class="align-middle"
-            type="text"
-            placeholder="NodeId"
-            bind:value={inputEditNodeId}
-            on:keypress={(e) =>
-                isEventByKey(e, "Enter", onEditNodeSaveButtonClicked)}
-            disabled={!selectedNode}
-        />
-        <button
-            class="btn btn-light"
-            on:click={onEditNodeSaveButtonClicked}
-            disabled={!selectedNode}>Save changes</button
-        >
-    </div>
-
-    <h5 class="mb-0">Pathfinder</h5>
-    <div>
-        <input
-            class="align-middle"
-            type="text"
-            placeholder="From"
-            bind:value={inputFromId}
-        />
-        <input
-            class="align-middle"
-            type="text"
-            placeholder="To"
-            bind:value={inputToId}
-        />
-        <button class="btn btn-light" on:click={onPathfindingButtonClicked}
-            >Find path (console)</button
-        >
-    </div>
-
-    <div id="graphContainer" class="mt-2" />
 </div>
 
 <style>
     :global(svg) {
         width: 100%;
-        height: 75vh;
+        height: 100%;
         overflow: hidden;
     }
-
-    #graphContainer {
-        border: 1px solid black;
-        margin-right: 1em;
-        height: 100%;
+    .graph-label {
+        color: theme('colors.primary');
     }
 </style>
