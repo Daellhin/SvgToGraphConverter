@@ -5,6 +5,8 @@ Features:
 - Convert svg paths to graph
 - Visualize created graph
 - Edit id's of created graph
+- Download graph as json
+- Load graph as json
 
 Created with Svelte and ngraph
 
