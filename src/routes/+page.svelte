@@ -124,7 +124,7 @@
         <div id="graphContainer" class="border-solid border-2 h-full" />
     </div>
     <div class="flex-col">
-        <h1 class="text-3xl font-bold mb-2">Svg</h1>
+        <h1 class="text-2xl font-bold mb-2">Svg</h1>
         <div class="flex flex-col mb-1 gap-4">
             <textarea
                 class="textarea input-bordered"
@@ -139,7 +139,7 @@
             >
         </div>
 
-        <h1 class="text-3xl font-bold mt-2 mb-2">Json</h1>
+        <h1 class="text-2xl font-bold mt-2 mb-2">Json</h1>
         <div class="flex flex-col mb-1 gap-4">
             <textarea
                 class="textarea input-bordered"
@@ -159,7 +159,7 @@
             >
         </div>
 
-        <h1 class="text-3xl font-bold mt-2 mb-2">Edit node (Select a node)</h1>
+        <h1 class="text-2xl font-bold mt-2 mb-2">Edit node (Select a node)</h1>
         <div class="mb-1">
             <div class="flex flex-row gap-2">
                 <input
@@ -179,7 +179,7 @@
             </div>
         </div>
 
-        <h5 class="text-3xl font-bold mt-2 mb-2">Pathfinder</h5>
+        <h5 class="text-2xl font-bold mt-2 mb-2">Pathfinder</h5>
         <div class="flex flex-col mb-1 gap-4">
             <div class="flex flex-row gap-2">
                 <input
@@ -208,7 +208,7 @@
         height: 100%;
         overflow: hidden;
     }
-    .graph-label {
+    :global(.graph-label) {
         color: theme('colors.primary');
     }
 </style>
