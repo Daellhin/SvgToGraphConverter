@@ -1,5 +1,5 @@
 # SvgToGraphConverter
-![Screenshot](./images/Screenshot.png)
+![Screenshot](./images/Screenshot_new.png)
 
 Features:
 - Convert svg paths to graph
